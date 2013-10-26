@@ -1,46 +1,41 @@
-# == Class: ohmyzsh::install
+# == Class: prezto::install
 #
-# This is the ohmyzsh module. It installs oh-my-zsh for a user and changes
+# This is the prezto module. It installs oh-my-zsh for a user and changes
 # their shell to zsh. It has been tested under Ubuntu.
 #
-# This module is called ohmyzsh as Puppet does not support hyphens in module
-# names.
+# This module is based on acme/ohmyzsh
 #
-# oh-my-zsh is a community-driven framework for managing your zsh configuration.
+# prezto is a community-driven framework for managing your zsh configuration: https://github.com/sorin-ionescu/prezto
 #
 # === Parameters
 #
-# None.
+#   [*git_repo*]
+#     Set which prezto git repo to download
+#     Default: git://github.com/sorin-ionescu/prezto.git
 #
 # === Examples
 #
-# class { 'ohmyzsh': }
-# ohmyzsh::install { 'acme': }
+# class { 'prezto': }
+# prezto::install { 'username': 
+#   git_repo => 'git://github.com/baopham/prezto.git'
+# }
 #
-# === Authors
 #
-# Leon Brocard <acme@astray.com>
-#
-# === Copyright
-#
-# Copyright 2013 Leon Brocard
-#
-define ohmyzsh::install() {
-  exec { 'ohmyzsh::git clone':
-    creates => "/home/${name}/.oh-my-zsh",
-    command => "/usr/bin/git clone git://github.com/robbyrussell/oh-my-zsh.git /home/${name}/.oh-my-zsh",
+define prezto::install($git_repo = 'git://github.com/sorin-ionescu/prezto.git') {
+  exec { 'prezto::git clone':
+    creates => "/home/${name}/.zprezto",
+    command => "/usr/bin/git clone --recursive ${git_repo} /home/${name}/.zprezto",
     user    => $name,
     require => [Package['git'], Package['zsh']]
   }
 
-  exec { 'ohmyzsh::cp .zshrc':
-    creates => "/home/${name}/.zshrc",
-    command => "/bin/cp /home/${name}/.oh-my-zsh/templates/zshrc.zsh-template /home/${name}/.zshrc",
+  exec { 'prezto::zsh runcoms':
+    command  => template("prezto/runcoms.erb"),
     user    => $name,
-    require => Exec['ohmyzsh::git clone'],
+    require => Exec['prezto::git clone'],
   }
 
-  user { "ohmyzsh::user ${name}":
+  user { "prezto::user ${name}":
     ensure  => present,
     name    => $name,
     shell   => '/usr/bin/zsh',

@@ -33,6 +33,7 @@ define prezto::install($git_repo = 'git://github.com/sorin-ionescu/prezto.git') 
     command  => template("prezto/runcoms.erb"),
     user    => $name,
     require => Exec['prezto::git clone'],
+    onlyif => "test ! -L /home/${name}/.zpreztorc || test ! -L /home/${name}/.zshrc || test ! -L /home/${name}/.zshenv"
   }
 
   user { "prezto::user ${name}":

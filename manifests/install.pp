@@ -22,17 +22,18 @@
 #
 #
 define prezto::install($git_repo = 'git://github.com/sorin-ionescu/prezto.git') {
-  exec { 'prezto::git clone':
-    creates => "/home/${name}/.zprezto",
-    command => "/usr/bin/git clone --recursive ${git_repo} /home/${name}/.zprezto",
-    user    => $name,
-    require => [Package['git'], Package['zsh']]
+  vcsrepo { "/home/${name}/.zprezto":
+    ensure => latest,
+    provider => git,
+    source => $git_repo,
+    force => true,
+    revision => 'master'
   }
 
   exec { 'prezto::zsh runcoms':
     command  => template("prezto/runcoms.erb"),
     user    => $name,
-    require => Exec['prezto::git clone'],
+    require => Vcsrepo["/home/${name}/.zprezto"],
     onlyif => "test ! -L /home/${name}/.zpreztorc || test ! -L /home/${name}/.zshrc || test ! -L /home/${name}/.zshenv"
   }
 

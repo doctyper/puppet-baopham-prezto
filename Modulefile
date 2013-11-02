@@ -8,4 +8,4 @@ description 'This is the prezto module. It installs prezto zsh framework for a u
 project_page 'https://github.com/baopham/puppet-baopham-prezto'
 
 ## Add dependencies, if any:
-# dependency 'username/name', '>= 1.2.0'
+dependency 'puppetlabs/vcsrepo', '>= 0.1.2'

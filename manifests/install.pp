@@ -30,7 +30,7 @@ define prezto::install($git_repo = 'git://github.com/sorin-ionescu/prezto.git') 
     revision => 'master'
   }
 
-  exec { 'prezto::zsh runcoms':
+  exec { 'prezto::runcoms':
     command  => template("prezto/runcoms.erb"),
     user    => $name,
     require => Vcsrepo["/home/${name}/.zprezto"],

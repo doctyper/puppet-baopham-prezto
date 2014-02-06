@@ -16,7 +16,7 @@
 # === Examples
 #
 # class { 'prezto': }
-# prezto::install { 'username': 
+# prezto::install { 'username':
 #   git_repo => 'git://github.com/baopham/prezto.git'
 # }
 #
@@ -34,7 +34,8 @@ define prezto::install($git_repo = 'git://github.com/sorin-ionescu/prezto.git') 
     command  => template("prezto/runcoms.erb"),
     user    => $name,
     require => Vcsrepo["/home/${name}/.zprezto"],
-    onlyif => "test ! -L /home/${name}/.zpreztorc || test ! -L /home/${name}/.zshrc || test ! -L /home/${name}/.zshenv"
+    provider => shell,
+    onlyif => ["test ! -L /home/${name}/.zpreztorc", "test ! -L /home/${name}/.zshrc", "test ! -L /home/${name}/.zshenv"]
   }
 
   user { "prezto::user ${name}":
